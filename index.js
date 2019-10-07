@@ -10,7 +10,7 @@ const writeFile = promisify(fs.writeFile)
 const separator = '>'
 
 async function readConfig() {
-    const fileContents = await readFile('.jarc')
+    const fileContents = await readFile('.ja')
     return fileContents.toString()
 }
 
