@@ -19,18 +19,38 @@ function validateLocalFilePath(localFilePath) {
     if (localFilePath === '') {
         throw new Error(`The local file path cannot be empty`)
     }
-    if (localFilePath.endsWith(path.sep) || localFilePath.endsWith('.')) {
-        throw new Error(`The local file path cannot be a directory`)
+    if (localFilePath.includes(separator)) {
+        throw new Error(`Invalid local file path containing "${separator}": ${localFilePath}`)
+    }
+    if (localFilePath.endsWith(path.sep)) {
+        throw new Error(`The local file path cannot be a directory: ${localFilePath}`)
     }
     if (path.isAbsolute(localFilePath)) {
         throw new Error(`No absolute paths are allowed but got: ${localFilePath}`)
     }
+    const cwd = process.cwd()
+    const absolutePath = path.resolve(cwd, localFilePath)
+    if (!absolutePath.startsWith(cwd)) {
+        throw new Error(`The local file path is pointing to a directory outside the current directory: ${localFilePath}`)
+    }
+
     return localFilePath
 }
 
 async function readConfigFile(configFileName) {
     const fileContents = await readFile(configFileName)
     return fileContents.toString()
+}
+
+function parseConfigLine(line) {
+    const separatorIndex = line.indexOf(separator)
+    if (separatorIndex === -1) {
+        throw new Error(`Could not find "${separator}" in this line: ${line}`)
+    }
+    return {
+        source: validateSource(line.substring(0, separatorIndex).trim()),
+        localFilePath: validateLocalFilePath(line.substr(separatorIndex + 1).trim()),
+    }
 }
 
 function parseConfig(config) {
@@ -40,20 +60,11 @@ function parseConfig(config) {
             const trimmedLine = line.trim()
             return trimmedLine !== '' && !trimmedLine.startsWith('#')
         })
-        .map(line => {
-            const separatorIndex = line.indexOf(separator)
-            if (separatorIndex === -1) {
-                throw new Error(`Could not find "${separator}" in this line: ${line}`)
-            }
-            return {
-                source: validateSource(line.substring(0, separatorIndex).trim()),
-                localFilePath: validateLocalFilePath(line.substr(separatorIndex + 1).trim()),
-            }
-        })
+        .map(parseConfigLine)
 }
 
 async function getConfig(configFileName = '.ja') {
     return parseConfig(await readConfigFile(configFileName))
 }
 
-module.exports = { getConfig, _test: { validateSource, validateLocalFilePath } }
+module.exports = { getConfig, _test: { validateSource, validateLocalFilePath, parseConfigLine } }

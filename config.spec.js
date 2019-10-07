@@ -1,4 +1,4 @@
-const { _test: { validateSource, validateLocalFilePath } } = require('./config.js')
+const { _test: { validateSource, validateLocalFilePath, parseConfigLine } } = require('./config.js')
 
 describe('config.js', () => {
     describe('validateSource()', () => {
@@ -6,12 +6,78 @@ describe('config.js', () => {
             const source = 'http://server.com/path/to/file'
             expect(validateSource(source)).toEqual(source)
         })
+
+        it('throws if the source cannot be parsed as a URL', () => {
+            expect(() => validateSource('//server.com/path/to/file')).toThrow()
+        })
+
+        it('throws if the source misses the path name', () => {
+            expect(() => validateSource('https://server.com')).toThrow()
+            expect(() => validateSource('https://server.com/')).toThrow()
+        })
     })
 
     describe('validateLocalFilePath()', () => {
-        it('returns the source if it is valid', () => {
+        it('returns the local file path if it is a valid file name', () => {
+            const localFilePath = 'file'
+            expect(validateLocalFilePath(localFilePath)).toEqual(localFilePath)
+        })
+
+        it('returns the local file path even if it has a valid directory', () => {
             const localFilePath = 'path/to/file'
             expect(validateLocalFilePath(localFilePath)).toEqual(localFilePath)
+        })
+
+        it('throws if the local file path is empty', () => {
+            expect(() => validateLocalFilePath('')).toThrow()
+        })
+
+        it('throws if the local file path points to a directory', () => {
+            expect(() => validateLocalFilePath('some/dir/')).toThrow()
+        })
+
+        it('throws if the local file path is absolute', () => {
+            expect(() => validateLocalFilePath('/file')).toThrow()
+            expect(() => validateLocalFilePath('/dir/file')).toThrow()
+        })
+
+        it('throws if the local file path points to a directory outside the current one', () => {
+            expect(() => validateLocalFilePath('../../../some/dir/')).toThrow()
+        })
+    })
+
+    describe('parseConfigLine()', () => {
+        it('returns the source if it is valid', () => {
+            expect(parseConfigLine(
+                'http://server.com/path/to/file > somefile'
+            )).toEqual({
+                source: 'http://server.com/path/to/file',
+                localFilePath: 'somefile',
+            })
+        })
+
+        it('throws if the separator is missing', () => {
+            expect(() => parseConfigLine(
+                'http://server.com/path/to/file somefile'
+            )).toThrow()
+        })
+
+        it('throws if the separator is misplaced', () => {
+            expect(() => parseConfigLine(
+                'http://server.com/path/to/file somefile >'
+            )).toThrow()
+            expect(() => parseConfigLine(
+                '> http://server.com/path/to/file somefile'
+            )).toThrow()
+        })
+
+        it('throws if the separator is repeated', () => {
+            expect(() => parseConfigLine(
+                'http://server.com/path/to/file > somefile > someOtherFile'
+            )).toThrow()
+            expect(() => parseConfigLine(
+                'http://server.com/path/to/file >> somefile'
+            )).toThrow()
         })
     })
 })
