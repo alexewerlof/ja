@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 const fs = require('fs')
+const path = require('path')
 const { promisify } = require('util')
 const fetch = require('node-fetch')
 const { whereFrom } = require('./wherefrom.js')
 
 const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
+const mkdir = promisify(fs.mkdir)
 
 const separator = '>'
 
-async function readConfig() {
+async function readConfigFile() {
     const fileContents = await readFile('.ja')
     return fileContents.toString()
 }
@@ -33,16 +35,53 @@ function parseConfig(config) {
         })
 }
 
-async function main() {
-    const config = parseConfig(await readConfig())
-    console.table(config)
-    await Promise.all(config.map(async task => {
-        console.log(0, task.source)
-        console.log(1, whereFrom(task.source))
-        console.log(2, task.destination)
-        const response = await fetch(whereFrom(task.source))
-        writeFile(task.destination, await response.text())
+function validateConfig(config) {
+    return config.every(({source, destination}) => {
+        // Throws source cannot be parsed as a URL
+        new URL(source)
+        if (path.isAbsolute(destination)) {
+            throw new Error(`No absolute paths are allowed but got: ${destination}`)
+        }
+        return true
+    })
+}
+
+function fetchFiles(config) {
+    return Promise.all(config.map(async ({ source, destination }) => {
+        const response = await fetch(whereFrom(source))
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${source}`)
+        }
+        console.log(`Fetched ${source}`)
+        return {
+            source,
+            destination,
+            contents: await response.text()
+        }
     }))
+}
+
+function writeFiles(config) {
+    return Promise.all(config.map(async ({destination, contents}) => {
+        const dir = path.dirname(destination)
+        if (dir !== '.') {
+            console.log(`Creating dir ${dir}...`)
+            await mkdir(dir, { recursive: true })
+        }
+        console.log(`Writing file ${destination}...`)
+        return writeFile(destination, contents)
+    }))
+}
+
+async function main() {
+    const config = parseConfig(await readConfigFile())
+    validateConfig(config)
+    if (config.length === 0) {
+        console.log(`Empty config! Nothing to do here!`)
+        return
+    }
+    console.table(config)
+    await writeFiles(await fetchFiles(config))
 }
 
 module.exports = { main }
