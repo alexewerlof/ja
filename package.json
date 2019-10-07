@@ -16,6 +16,9 @@
     "am": "^1.0.1",
     "node-fetch": "^2.6.0"
   },
+  "repository": {
+    "url": "https://github.com/userpixel/ja"
+  },
   "devDependencies": {
     "jest": "^24.9.0"
   }
