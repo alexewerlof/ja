@@ -16,8 +16,8 @@ https://github.schibsted.io/smp-distribution/hyperion/blob/fe7cefd03b3ffaf88c8c9
 https://raw.github.schibsted.io/smp-distribution/hyperion/fe7cefd03b3ffaf88c8c92ba74ad8ba43661cf73/src/sites/sysla/.env-dev?token=AAAFT12FjlZdT74XxaaEmZZn48Nf5B_Xks5do5ZPwA%3D%3D
 */
 
-function whereFrom(src, token) {
-    const ret = new URL(src)
+function whereFrom(source, token) {
+    const ret = new URL(source)
     if (ret.host === 'github.com') {
         ret.host = 'raw.githubusercontent.com'
     } else if (!ret.host.startsWith('raw.')) {
