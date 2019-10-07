@@ -2,47 +2,45 @@ const fs = require('fs')
 const { promisify } = require('util')
 const fetch = require('node-fetch')
 const am = require('am')
+const { whereFrom } = require('./wherefrom.js')
 
 const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
 
-async function getConfig() {
+const separator = '>'
+
+async function readConfig() {
     const fileContents = await readFile('.moshirc')
-    const configs = fileContents.toString()
-    return configs
+    return fileContents.toString()
+}
+
+function parseConfig(config) {
+    return config
         .split('\n')
         .filter(line => {
             const trimmedLine = line.trim()
             return trimmedLine !== '' && !trimmedLine.startsWith('#')
         })
         .map(line => {
-            const colon = line.indexOf(':')
-            if (colon === -1) {
-                throw new Error(`Could not find ":" in this line: ${line}`)
+            const separatorIndex = line.indexOf(separator)
+            if (separatorIndex === -1) {
+                throw new Error(`Could not find "${separator}" in this line: ${line}`)
             }
             return {
-                destination: line.substring(0, colon),
-                source: line.substr(colon + 1)
+                destination: line.substr(separatorIndex + 1).trim(),
+                source: line.substring(0, separatorIndex).trim(),
             }
         })
 }
 
-function sourceUrl(source) {
-    // https://github.com/userpixel/micromustache/blob/master/.editorconfig
-    // https://raw.githubusercontent.com/userpixel/micromustache/master/.editorconfig
-    return source
-        .replace('https://github.com/', 'https://raw.githubusercontent.com/')
-        .replace('blob/', '')
-}
-
 async function main() {
-    console.log('hi!')
-    const config = await getConfig()
+    const config = parseConfig(await readConfig())
+    console.table(config)
     await Promise.all(config.map(async task => {
         console.log(0, task.source)
-        console.log(1, sourceUrl(task.source))
+        console.log(1, whereFrom(task.source))
         console.log(2, task.destination)
-        const response = await fetch(sourceUrl(task.source))
+        const response = await fetch(whereFrom(task.source))
         writeFile(task.destination, await response.text())
     }))
 }
