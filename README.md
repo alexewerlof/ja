@@ -16,6 +16,8 @@ We could use github submodules or any of the other fancy mechanisms, but copy/pa
 This little CLI allows us to set a source repo and copy the files in any other repository. It's not perfect, but it does the job.
 Feedback is welcome.
 
+![Diagram: sharing files across several repos](./README.jpg)
+
 ## Install
 
 ```
