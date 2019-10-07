@@ -10,6 +10,9 @@
   "directories": {
     "bin": "cli"
   },
+  "bin": {
+    "ja": "cli/ja.js"
+  },
   "keywords": [],
   "license": "MIT",
   "dependencies": {
