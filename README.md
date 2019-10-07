@@ -1,6 +1,6 @@
 # Introduction
 
-This is a very simple but useful CLI utility to fetch files from github into the current folder.
+This is a very simple CLI utility to fetch files from Github into the current folder/repository.
 
 Think about it as `curl` for Github.
 
@@ -8,6 +8,13 @@ Think about it as `curl` for Github.
 * Supports private repos and Github Enterprise
 * Secure
 * Descriptive error messages
+
+### Use case
+
+In our organization we have multiple js repos but some files need to be manually synced between them like: `.eslintrc`, `commit-message-validator.js`, etc.
+We could use github submodules or any of the other fancy mechanisms, but copy/paste have been the king.
+This little CLI allows us to set a source repo and copy the files in any other repository. It's not perfect, but it does the job.
+Feedback is welcome.
 
 ## Install
 
@@ -17,7 +24,7 @@ $ npm i -g ja
 
 ## Usage
 
-Create a `.jarc` file in the root of your project in this format: 
+Create a `.ja` file in the root of your project in this format: 
 
 ```
 # Comments
