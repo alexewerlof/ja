@@ -1,15 +1,17 @@
 {
-  "name": "moshi",
-  "version": "1.0.0",
-  "description": "",
+  "name": "ja",
+  "version": "0.0.1",
+  "description": "A simple CLI to read files from git repositories",
   "main": "index.js",
   "scripts": {
     "test": "jest .",
     "test:watch": "jest . --watch"
   },
+  "directories": {
+    "bin": "cli.js"
+  },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "am": "^1.0.1",
     "node-fetch": "^2.6.0"

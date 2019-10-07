@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs')
 const { promisify } = require('util')
 const fetch = require('node-fetch')
@@ -10,7 +11,7 @@ const writeFile = promisify(fs.writeFile)
 const separator = '>'
 
 async function readConfig() {
-    const fileContents = await readFile('.moshirc')
+    const fileContents = await readFile('.jarc')
     return fileContents.toString()
 }
 
