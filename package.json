@@ -8,7 +8,7 @@
     "test:watch": "jest . --watch"
   },
   "directories": {
-    "bin": "cli.js"
+    "bin": "cli"
   },
   "keywords": [],
   "license": "MIT",

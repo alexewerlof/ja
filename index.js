@@ -2,7 +2,6 @@
 const fs = require('fs')
 const { promisify } = require('util')
 const fetch = require('node-fetch')
-const am = require('am')
 const { whereFrom } = require('./wherefrom.js')
 
 const readFile = promisify(fs.readFile)
@@ -46,4 +45,4 @@ async function main() {
     }))
 }
 
-am(main)
+module.exports = { main }
