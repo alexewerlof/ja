@@ -12,27 +12,24 @@ describe('whereFrom()', () => {
     it('works for GHE', () => {
         expect(whereFrom(
             'https://github.custom-domain.example/user-or-org/repo-name/blob/master/path/to/file',
-            'THE-TOKEN'
         )).toEqual(
-            'https://raw.github.custom-domain.example/user-or-org/repo-name/master/path/to/file?token=THE-TOKEN'
+            'https://raw.github.custom-domain.example/user-or-org/repo-name/master/path/to/file'
         )
     })
     
     it('works for GHE with branch name', () => {
         expect(whereFrom(
             'https://github.custom-domain.example/user-or-org/repo-name/blob/branch-name/path/to/file',
-            'THE-TOKEN'
         )).toEqual(
-            'https://raw.github.custom-domain.example/user-or-org/repo-name/branch-name/path/to/file?token=THE-TOKEN'
+            'https://raw.github.custom-domain.example/user-or-org/repo-name/branch-name/path/to/file'
         )
     })
 
     it('works for GHE with hash', () => {
         expect(whereFrom(
             'https://github.custom-domain.example/user-or-org/repo-name/blob/f23f131ad35c90842be45c800b9fdeb1134tbc/path/to/file',
-            'THE-TOKEN'
         )).toEqual(
-            'https://raw.github.custom-domain.example/user-or-org/repo-name/f23f131ad35c90842be45c800b9fdeb1134tbc/path/to/file?token=THE-TOKEN'
+            'https://raw.github.custom-domain.example/user-or-org/repo-name/f23f131ad35c90842be45c800b9fdeb1134tbc/path/to/file'
         )
     })
 

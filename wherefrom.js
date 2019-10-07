@@ -1,6 +1,6 @@
 const { URL, URLSearchParams } = require('url')
 
-function whereFrom(source, token) {
+function whereFrom(source) {
     const ret = new URL(source)
     if (ret.host === 'github.com') {
         ret.host = 'raw.githubusercontent.com'
@@ -8,13 +8,7 @@ function whereFrom(source, token) {
         ret.host = 'raw.' + ret.host
     }
 
-    ret.pathname = ret.pathname.replace(/blob\//, '')
-
-    if (token !== undefined) {
-        const newSearchparams = new URLSearchParams(ret.search)
-        newSearchparams.set('token', token)
-        ret.search = newSearchparams.toString()
-    }
+    ret.pathname = ret.pathname.replace('blob/', '')
 
     return ret.toString()
 }

@@ -2,7 +2,12 @@
 
 This is a very simple but useful CLI utility to fetch files from github into the current folder.
 
-_Currently it is in beta_
+Think about it as `curl` for Github.
+
+* Lightweight
+* Supports private repos and Github Enterprise
+* Secure
+* Descriptive error messages
 
 ## Install
 
@@ -52,6 +57,33 @@ It'll first fetch all the files from those URLs and then rewrites them to local 
 * If the file already exists, it rewrites it. Any file permission will not be changed.
 * It writes in utf-8 format
 * It won't do anything if it cannot find a `.ja` file in the local directory.
+
+# Token
+
+If you are trying to access Github Enterprize or a private repository, you need a token to access the API.
+`ja` gets this token from the environment variable.
+
+### Generating the token
+
+This is a one-time process:
+
+1. Click on your github profile and go to **Settings > Developer settings > Personal access tokens**
+2. Click **Generate new token**
+3. Give your token a name and for the scope, only choose **public_repo** (that's all that is needed)
+4. Press the **Generate token** button and _make sure to copy your token to a safe place because it's the last time you see it (don't worry you can always go there and make a new one)_ 
+
+### Passing the token
+
+`ja` expects the token in an environment variable named after the host name of the source URL.
+For example the token for accessing `github.com` can be stored in `GITHUB_COM_TOKEN` environment variable.
+If your Github Enterprise is hosted under `github.companyname.io`, the env var is `GITHUB_COMPANYNAME_IO_TOKEN`.
+
+There are many ways to pass an environment variable to an application:
+
+* You can put it in your `~/.bashrc` (Linux) or `~/.bash_profile` (Mac)
+* You can pass it directly when running `ja` like this: `GITHUB_COM_TOKEN=328948kksjkafhdskjf ja`
+
+The first method is easier because you do it once and then can run `ja` without any extra hassle.
 
 # License
 
