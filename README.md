@@ -16,7 +16,7 @@ We could use github submodules or any of the other fancy mechanisms, but copy/pa
 This little CLI allows us to set a source repo and copy the files in any other repository. It's not perfect, but it does the job.
 Feedback is welcome.
 
-![Diagram: sharing files across several repos](./README.jpg)
+> Bugs reproduce by copy/paste and take shelter in human errors. So if you have to copy/paste, at least automate it.
 
 ## Install
 
@@ -44,6 +44,7 @@ https://github.com/userpixel/pk/blob/master/package.json > packages/package.json
 ```
 
 * Each line simply contains a URL and a local file name.
+* Currently you need to specify each file explicitly. It's not possible to fetch a whole directory.
 * The local file name can contain a path.
 * The local file name path is relative to the current directory where the `.ja` file is located.
 * For security reasons no absolute path is allowed.
@@ -100,7 +101,7 @@ The first method is easier because you do it once and then can run `ja` without 
 When you run `ja`, it'll look for its config file (`.ja`) in the same directory.
 If it doesn't find it, it'll complain. If it finds it, it tries to parse and validate it.
 For every URL it finds, it tries to figure out the "raw" address for it.
-For example a URL that looks like:
+For example a URL that points to:
 
 ```
 https://github.com/userpixel/ja/blob/master/README.md
