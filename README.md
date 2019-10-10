@@ -89,10 +89,33 @@ If your Github Enterprise is hosted under `github.companyname.io`, the env var i
 
 There are many ways to pass an environment variable to an application:
 
+* You can put it in an `.env` file next to your `.ja` file (the easiest option)
 * You can put it in your `~/.bashrc` (Linux) or `~/.bash_profile` (Mac)
 * You can pass it directly when running `ja` like this: `GITHUB_COM_TOKEN=328948kksjkafhdskjf ja`
 
 The first method is easier because you do it once and then can run `ja` without any extra hassle.
+
+# How does it work?
+
+When you run `ja`, it'll look for its config file (`.ja`) in the same directory.
+If it doesn't find it, it'll complain. If it finds it, it tries to parse and validate it.
+For every URL it finds, it tries to figure out the "raw" address for it.
+For example a URL that looks like:
+
+```
+https://github.com/userpixel/ja/blob/master/README.md
+```
+
+Will be fetched from:
+
+```
+https://raw.githubusercontent.com/userpixel/ja/master/README.md
+```
+
+Then it fetches all those files and keeps them in memory.
+If there was no problem fetching all those files, it goes ahead and writes them.
+If you already have those files, it'll rewrite them but you can easily see the difference using `git diff`.
+If the overwritten file has exactly the same content, git doesn't consider them to be changed.
 
 # License
 

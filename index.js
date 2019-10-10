@@ -3,17 +3,25 @@ const fs = require('fs')
 const path = require('path')
 const { promisify } = require('util')
 const fetch = require('node-fetch')
+const dotenv = require('dotenv')
 const { whereFrom } = require('./wherefrom.js')
 const { getConfig } = require('./config.js')
+
+dotenv.config({ debug: process.env.DEBUG })
 
 const writeFile = promisify(fs.writeFile)
 const mkdir = promisify(fs.mkdir)
 
 function getToken(source) {
     const { hostname } = new URL(source)
-    const envVarName = hostname.toUpperCase().replace(/\./g, '_') + '_TOKEN'
-    console.log(`Looking up the token from env var $${envVarName}`)
-    return process.env[envVarName]
+    const envVarName = hostname.toUpperCase().replace(/[.:]/g, '_') + '_TOKEN'
+    const token = process.env[envVarName]
+    if (token) {
+        console.log(`Using the token stored in $${envVarName} for ${hostname}`)
+        return token
+    } else {
+        console.info(`Not using a token for ${hostname}`)
+    }
 }
 
 function fetchFiles(config) {
