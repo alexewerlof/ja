@@ -49,34 +49,43 @@ describe('config.js', () => {
     describe('parseConfigLine()', () => {
         it('returns the source if it is valid', () => {
             expect(parseConfigLine(
-                'http://server.com/path/to/file > somefile'
+                'http://server.com/path/to/elephant > somefile'
             )).toEqual({
-                source: 'http://server.com/path/to/file',
+                source: 'http://server.com/path/to/elephant',
                 localFilePath: 'somefile',
             })
         })
 
-        it('throws if the separator is missing', () => {
+        it('deduces the file name form the source', () => {
+            expect(parseConfigLine(
+                'http://server.com/path/to/tiger'
+            )).toEqual({
+                source: 'http://server.com/path/to/tiger',
+                localFilePath: './path/to/tiger'
+            })
+        })
+
+        it('throws if it cannot parse the source as a valid URL', () => {
             expect(() => parseConfigLine(
-                'http://server.com/path/to/file somefile'
+                'http://server.com/path/to/lion somefile'
             )).toThrow()
         })
 
         it('throws if the separator is misplaced', () => {
             expect(() => parseConfigLine(
-                'http://server.com/path/to/file somefile >'
+                'http://server.com/path/to/zebra somefile >'
             )).toThrow()
             expect(() => parseConfigLine(
-                '> http://server.com/path/to/file somefile'
+                '> http://server.com/path/to/mouse somefile'
             )).toThrow()
         })
 
         it('throws if the separator is repeated', () => {
             expect(() => parseConfigLine(
-                'http://server.com/path/to/file > somefile > someOtherFile'
+                'http://server.com/path/to/cat > somefile > someOtherFile'
             )).toThrow()
             expect(() => parseConfigLine(
-                'http://server.com/path/to/file >> somefile'
+                'http://server.com/path/to/dog >> somefile'
             )).toThrow()
         })
     })
