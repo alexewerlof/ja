@@ -61,7 +61,7 @@ describe('config.js', () => {
                 'http://server.com/path/to/tiger'
             )).toEqual({
                 source: 'http://server.com/path/to/tiger',
-                localFilePath: './path/to/tiger'
+                localFilePath: 'tiger'
             })
         })
 

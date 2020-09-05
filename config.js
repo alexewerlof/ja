@@ -48,7 +48,7 @@ function parseConfigLine(line) {
         throw new Error(`Found more than one separator (${separator}) in "${line}"`)
     }
     const source = parts[0].trim()
-    const localFilePath = parts.length === 2 ? parts[1].trim() : '.' + (new URL(source)).pathname
+    const localFilePath = parts.length === 2 ? parts[1].trim() : path.basename(new URL(source).pathname)
     return {
         source: validateSource(source),
         localFilePath: validateLocalFilePath(localFilePath),
