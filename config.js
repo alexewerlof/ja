@@ -1,6 +1,5 @@
 const { promises: { readFile, }} = require('fs')
 const path = require('path')
-const { parse } = require('path')
 
 const separator = '>'
 

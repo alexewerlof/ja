@@ -1,4 +1,4 @@
-const { URL, URLSearchParams } = require('url')
+const { URL } = require('url')
 
 function whereFrom(source) {
     const ret = new URL(source)

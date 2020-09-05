@@ -1,16 +1,12 @@
 #!/usr/bin/env node
-const fs = require('fs')
+const { promises: { writeFile, mkdir } } = require('fs')
 const path = require('path')
-const { promisify } = require('util')
 const fetch = require('node-fetch')
 const dotenv = require('dotenv')
 const { whereFrom } = require('./wherefrom.js')
 const { getConfig } = require('./config.js')
 
 dotenv.config({ debug: process.env.DEBUG })
-
-const writeFile = promisify(fs.writeFile)
-const mkdir = promisify(fs.mkdir)
 
 function getToken(source) {
     const { hostname } = new URL(source)
