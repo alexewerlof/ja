@@ -10,10 +10,10 @@ function sourceTokenName(source) {
 function getToken(source) {
   const token = process.env[sourceTokenName(source)]
   if (token) {
-      debug('Using the token stored in $%s for %s', envVarName, source)
-      return token
+    debug('Using the token stored in $%s for %s', envVarName, source)
+    return token
   } else {
-      debug('No token set for %s', source)
+    debug('No token set for %s', source)
   }
 }
 
