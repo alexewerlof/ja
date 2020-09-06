@@ -47,7 +47,6 @@ async function writeLocalFile(localFilePath, contents) {
 
 async function readSourceWriteFile({ source, localFilePath }) {
     const contents = await readSource(source)
-    console.log('ho')
     return await writeLocalFile(localFilePath, contents)
 }
 
