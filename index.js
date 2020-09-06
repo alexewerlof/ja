@@ -5,20 +5,9 @@ const fetch = require('node-fetch')
 const dotenv = require('dotenv')
 const { whereFrom } = require('./wherefrom.js')
 const { getConfig } = require('./config.js')
+const { getToken } = require('./token.js')
 
 dotenv.config({ debug: process.env.DEBUG })
-
-function getToken(source) {
-    const { hostname } = new URL(source)
-    const envVarName = hostname.toUpperCase().replace(/[.:]/g, '_') + '_TOKEN'
-    const token = process.env[envVarName]
-    if (token) {
-        console.log(`Using the token stored in $${envVarName} for ${hostname}`)
-        return token
-    } else {
-        console.info(`Not using a token for ${hostname}`)
-    }
-}
 
 async function readSource(source) {
     const translatedSource = whereFrom(source)
