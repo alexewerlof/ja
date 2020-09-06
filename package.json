@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest .",
     "test:watch": "jest . --watch",
+    "prettify": "prettier -w '*.js'",
     "postversion": "git push && git push --tags"
   },
   "directories": {
@@ -26,6 +27,7 @@
     "url": "https://github.com/userpixel/ja"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "prettier": "^2.1.1"
   }
 }
