@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest .",
     "test:watch": "jest . --watch",
+    "prettify": "prettier -w '*.js'",
     "postversion": "git push && git push --tags"
   },
   "directories": {
@@ -17,14 +18,16 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
-    "am": "^1.0.1",
-    "dotenv": "^8.1.0",
-    "node-fetch": "^2.6.0"
+    "am": "^1.0.2",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.1"
   },
   "repository": {
     "url": "https://github.com/userpixel/ja"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^26.4.2",
+    "prettier": "^2.1.1"
   }
 }

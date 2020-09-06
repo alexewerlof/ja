@@ -1,70 +1,65 @@
 #!/usr/bin/env node
-const fs = require('fs')
+const {
+  promises: { writeFile, mkdir },
+} = require('fs')
 const path = require('path')
-const { promisify } = require('util')
 const fetch = require('node-fetch')
 const dotenv = require('dotenv')
+const createDebug = require('debug')
 const { whereFrom } = require('./wherefrom.js')
 const { getConfig } = require('./config.js')
+const { getToken } = require('./token.js')
 
 dotenv.config({ debug: process.env.DEBUG })
 
-const writeFile = promisify(fs.writeFile)
-const mkdir = promisify(fs.mkdir)
+const debug = createDebug('index')
 
-function getToken(source) {
-    const { hostname } = new URL(source)
-    const envVarName = hostname.toUpperCase().replace(/[.:]/g, '_') + '_TOKEN'
-    const token = process.env[envVarName]
-    if (token) {
-        console.log(`Using the token stored in $${envVarName} for ${hostname}`)
-        return token
-    } else {
-        console.info(`Not using a token for ${hostname}`)
-    }
+async function readSource(source) {
+  const translatedSource = whereFrom(source)
+  const headers = {}
+  const token = getToken(source)
+  if (token) {
+    debug('Using a token for %s', source)
+    headers['Authorization'] = `token ${token}`
+  }
+  debug('Fetching %s', source)
+  const response = await fetch(translatedSource, { headers })
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch ${source} from ${translatedSource}. Error: ${response.status} ${response.statusText}`
+    )
+  }
+  debug('Fetched %s', source)
+  return await response.text()
 }
 
-function fetchFiles(config) {
-    return Promise.all(config.map(async ({ source, localFilePath }) => {
-        const translatedSource = whereFrom(source)
-        const token = getToken(source)
-        const headers = {}
-        if (token) {
-            headers['Authorization'] = `token ${token}`
-        }
-        const response = await fetch(translatedSource, { headers })
-        if (!response.ok) {
-            throw new Error(`Failed to fetch ${source} from ${translatedSource}. Error: ${response.status} ${response.statusText}`)
-        }
-        console.log(`Fetched ${source}`)
-        return {
-            source,
-            localFilePath,
-            contents: await response.text()
-        }
-    }))
+async function writeLocalFile(contents, localFilePath) {
+  const dir = path.dirname(localFilePath)
+  if (dir !== '.') {
+    debug(`Ensuring dir exists ${dir}...`)
+    await mkdir(dir, { recursive: true })
+  }
+  debug('Writing file %s...', localFilePath)
+  return writeFile(localFilePath, contents)
 }
 
-function writeFiles(config) {
-    return Promise.all(config.map(async ({ localFilePath, contents }) => {
-        const dir = path.dirname(localFilePath)
-        if (dir !== '.') {
-            console.log(`Creating dir ${dir}...`)
-            await mkdir(dir, { recursive: true })
-        }
-        console.log(`Writing file ${localFilePath}...`)
-        return writeFile(localFilePath, contents)
-    }))
+async function readSourceWriteLocalFile({ source, localFilePath }) {
+  const contents = await readSource(source)
+  return await writeLocalFile(contents, localFilePath)
 }
 
-async function main() {
-    const config = await getConfig()
-    if (config.length === 0) {
-        console.log(`Empty config! Nothing to do here!`)
-        return
-    }
-    console.table(config)
-    await writeFiles(await fetchFiles(config))
+async function applyConfig(config) {
+  debug('Applying config %O', config)
+  return await Promise.all(config.map(readSourceWriteLocalFile))
 }
 
-module.exports = { main }
+async function readAndApplyConfig() {
+  const config = await getConfig()
+  if (config.length === 0) {
+    debug('Empty config! Nothing to do here!')
+    return
+  }
+  return await applyConfig(config)
+}
+
+module.exports = { readAndApplyConfig }
