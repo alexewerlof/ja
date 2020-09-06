@@ -3,34 +3,39 @@ const { promises: { writeFile, mkdir } } = require('fs')
 const path = require('path')
 const fetch = require('node-fetch')
 const dotenv = require('dotenv')
+const createDebug = require('debug')
 const { whereFrom } = require('./wherefrom.js')
 const { getConfig } = require('./config.js')
 const { getToken } = require('./token.js')
 
 dotenv.config({ debug: process.env.DEBUG })
 
+const debug = createDebug('index')
+
 async function readSource(source) {
     const translatedSource = whereFrom(source)
     const token = getToken(source)
     const headers = {}
     if (token) {
+        debug('Using a token for %s', source)
         headers['Authorization'] = `token ${token}`
     }
+    debug('Fetching %s', source)
     const response = await fetch(translatedSource, { headers })
     if (!response.ok) {
         throw new Error(`Failed to fetch ${source} from ${translatedSource}. Error: ${response.status} ${response.statusText}`)
     }
-    console.log(`Fetched ${source}`)
+    debug('Fetched %s', source)
     return await response.text()
 }
 
 async function writeDestination(contents, localFilePath) {
     const dir = path.dirname(localFilePath)
     if (dir !== '.') {
-        console.log(`Ensuring dir exists ${dir}...`)
+        debug(`Ensuring dir exists ${dir}...`)
         await mkdir(dir, { recursive: true })
     }
-    console.log(`Writing file ${localFilePath}...`)
+    debug('Writing file %s...', localFilePath)
     return writeFile(localFilePath, contents)
 }
 
@@ -40,14 +45,14 @@ async function readSourceWriteDestination({ source, localFilePath }) {
 }
 
 async function applyConfig(config) {
-  console.table(config)
+  debug('Applying config %O', config)
   return await Promise.all(config.map(readSourceWriteDestination))
 }
 
 async function readAndApplyConfig() {
     const config = await getConfig()
     if (config.length === 0) {
-        console.log(`Empty config! Nothing to do here!`)
+        debug('Empty config! Nothing to do here!')
         return
     }
     return await applyConfig(config)

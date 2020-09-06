@@ -18,6 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "am": "^1.0.1",
+    "debug": "^4.1.1",
     "dotenv": "^8.1.0",
     "node-fetch": "^2.6.0"
   },

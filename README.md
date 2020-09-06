@@ -113,6 +113,25 @@ This is a one-time process:
 1. Give your token a name and for the scope, only choose **public_repo** (that's all that is needed)
 1. Press the **Generate token** button. Put this token where `ja` can find it. _Make sure to copy your token to a safe place because it's the last time you see it (don't worry you can always go there and make a new one)_
 
+## Test
+
+We use [Jest](https://jestjs.io/).
+
+```
+# Install dependencies and run all tests
+$ npm it
+```
+
+## Debug
+
+We use [Debug](https://www.npmjs.com/package/debug).
+
+Run the CLI showing debug info:
+
+```
+$ DEBUG=* node cli/ja.js
+```
+
 ## License
 
 MIT

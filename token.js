@@ -1,3 +1,7 @@
+const createDebug = require('debug')
+
+const debug = createDebug('token')
+
 function sourceTokenName(source) {
   const { hostname } = new URL(source)
   return hostname.toUpperCase().replace(/[^\w]/g, '_') + '_TOKEN'
@@ -6,10 +10,10 @@ function sourceTokenName(source) {
 function getToken(source) {
   const token = process.env[sourceTokenName(source)]
   if (token) {
-      console.log(`Using the token stored in $${envVarName} for ${hostname}`)
+      debug('Using the token stored in $%s for %s', envVarName, source)
       return token
   } else {
-      console.info(`Not using a token for ${hostname}`)
+      debug('No token set for %s', source)
   }
 }
 
