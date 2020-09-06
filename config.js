@@ -37,7 +37,7 @@ function validateLocalFilePath(localFilePath) {
     return localFilePath
 }
 
-async function readConfigFile(configFileName) {
+async function readConfig(configFileName) {
     return await readFile(configFileName, 'utf-8')
 }
 
@@ -66,7 +66,7 @@ function parseConfig(config) {
 }
 
 async function getConfig(configFileName = '.ja') {
-    return parseConfig(await readConfigFile(configFileName))
+    return parseConfig(await readConfig(configFileName))
 }
 
 module.exports = { getConfig, _test: { validateSource, validateLocalFilePath, parseConfigLine } }

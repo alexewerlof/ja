@@ -1,6 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env -u DEBUG node
 
 const am = require('am')
-const { main } = require('../index.js')
+const { readAndApplyConfig } = require('../index.js')
 
-am(main)
+am(readAndApplyConfig)

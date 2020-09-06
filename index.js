@@ -35,29 +35,33 @@ async function readSource(source) {
     return await response.text()
 }
 
-async function writeLocalFile(localFilePath, contents) {
+async function writeDestination(contents, localFilePath) {
     const dir = path.dirname(localFilePath)
     if (dir !== '.') {
-        console.log(`Creating dir ${dir}...`)
+        console.log(`Ensuring dir exists ${dir}...`)
         await mkdir(dir, { recursive: true })
     }
     console.log(`Writing file ${localFilePath}...`)
     return writeFile(localFilePath, contents)
 }
 
-async function readSourceWriteFile({ source, localFilePath }) {
+async function readSourceWriteDestination({ source, localFilePath }) {
     const contents = await readSource(source)
-    return await writeLocalFile(localFilePath, contents)
+    return await writeDestination(contents, localFilePath)
 }
 
-async function main() {
+async function applyConfig(config) {
+  console.table(config)
+  return await Promise.all(config.map(readSourceWriteDestination))
+}
+
+async function readAndApplyConfig() {
     const config = await getConfig()
     if (config.length === 0) {
         console.log(`Empty config! Nothing to do here!`)
         return
     }
-    console.table(config)
-    await Promise.all(config.map(readSourceWriteFile))
+    return await applyConfig(config)
 }
 
-module.exports = { main }
+module.exports = { readAndApplyConfig }
