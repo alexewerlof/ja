@@ -16,8 +16,8 @@ const debug = createDebug('index')
 
 async function readSource(source) {
   const translatedSource = whereFrom(source)
-  const token = getToken(source)
   const headers = {}
+  const token = getToken(source)
   if (token) {
     debug('Using a token for %s', source)
     headers['Authorization'] = `token ${token}`
@@ -33,7 +33,7 @@ async function readSource(source) {
   return await response.text()
 }
 
-async function writeDestination(contents, localFilePath) {
+async function writeLocalFile(contents, localFilePath) {
   const dir = path.dirname(localFilePath)
   if (dir !== '.') {
     debug(`Ensuring dir exists ${dir}...`)
@@ -43,14 +43,14 @@ async function writeDestination(contents, localFilePath) {
   return writeFile(localFilePath, contents)
 }
 
-async function readSourceWriteDestination({ source, localFilePath }) {
+async function readSourceWriteLocalFile({ source, localFilePath }) {
   const contents = await readSource(source)
-  return await writeDestination(contents, localFilePath)
+  return await writeLocalFile(contents, localFilePath)
 }
 
 async function applyConfig(config) {
   debug('Applying config %O', config)
-  return await Promise.all(config.map(readSourceWriteDestination))
+  return await Promise.all(config.map(readSourceWriteLocalFile))
 }
 
 async function readAndApplyConfig() {
