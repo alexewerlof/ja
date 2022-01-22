@@ -21,7 +21,7 @@
     "am": "^1.0.2",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^3.1.1"
   },
   "repository": {
     "url": "https://github.com/userpixel/ja"
